@@ -1,30 +1,30 @@
 :root {
-  /* ERGONOMIC TEAL PALETTE (BASE LOGO: #1e5f64) */
-  --bg-primary: #f8fafb;
+  /* ERGONOMIC TEAL PALETTE (BASE LOGO: #006064) */
+  --bg-primary: #f5f9f9; /* Softer, ergonomic off-white teal */
   --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
+  --bg-tertiary: #edf4f5;
   
-  --text-primary: #132e31;
+  --text-primary: #0f2a2d; /* High contrast but softer than pure black */
   --text-secondary: #3d5a5e;
-  --text-muted: #64748b;
+  --text-muted: #6b8a8e;
   
-  --brand-primary: #1e5f64;
-  --brand-primary-hover: #164a4e;
+  --brand-primary: #006064; /* Exact logo teal */
+  --brand-primary-hover: #004d40;
   --brand-primary-light: #e0f2f1;
   
-  --accent-danger: #ea580c; /* Softened red to orange-red */
-  --accent-success: #0d9488; /* Teal-green */
-  --accent-warning: #ca8a04;
+  --accent-danger: #d84315; /* Soft burnt orange-red */
+  --accent-success: #00796b;
+  --accent-warning: #f9a825;
   
-  --border-color: #e2e8f0;
+  --border-color: #d1e2e4;
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 96, 100, 0.05);
+  --shadow-md: 0 6px 12px -2px rgba(0, 96, 100, 0.08), 0 3px 6px -3px rgba(0, 96, 100, 0.1);
+  --shadow-lg: 0 15px 25px -5px rgba(0, 96, 100, 0.12), 0 8px 10px -6px rgba(0, 96, 100, 0.1);
 
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 80px;
@@ -32,19 +32,19 @@
 }
 
 [data-theme='dark'] {
-  --bg-primary: #0c1b1d;
-  --bg-secondary: #132e31;
-  --bg-tertiary: #1b3d41;
+  --bg-primary: #041416; /* Deepest Petrol/Teal */
+  --bg-secondary: #0a2326;
+  --bg-tertiary: #0e2f33;
 
   --text-primary: #e0f2f1;
-  --text-secondary: #94a3b8;
-  --text-muted: #475569;
+  --text-secondary: #90aeb2;
+  --text-muted: #547478;
   
-  --brand-primary: #26a69a; /* Lighter teal for dark mode visibility */
-  --brand-primary-hover: #4db6ac;
-  --brand-primary-light: rgba(38, 166, 154, 0.1);
+  --brand-primary: #4db6ac; /* More visible teal for dark mode */
+  --brand-primary-hover: #80cbc4;
+  --brand-primary-light: rgba(77, 182, 172, 0.1);
   
-  --border-color: #2c5f66;
+  --border-color: #1a3f44;
 }
 
 * {

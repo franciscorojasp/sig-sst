@@ -1,5 +1,6 @@
 import { QRCodeSVG } from 'qrcode.react';
-import { Mail, Phone, Instagram, Globe, MessageSquare, Download, Share2, Rocket, Cloud, Zap, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, Camera, Globe, MessageSquare, Download, Share2, Rocket, Cloud, Zap } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logo from '../assets/logo.png';
 
@@ -71,7 +72,7 @@ export const Developers = () => {
              <div className="space-y-4">
                 <div className="flex items-center gap-4 text-secondary hover:text-brand-primary transition-colors cursor-pointer"><Phone size={20} /> <span>+58 424 4736489 / +58 412 4116804</span></div>
                 <div className="flex items-center gap-4 text-secondary hover:text-brand-primary transition-colors cursor-pointer"><Mail size={20} /> <span>ergoexpressinfo@gmail.com</span></div>
-                <div className="flex items-center gap-4 text-secondary hover:text-brand-primary transition-colors cursor-pointer"><Instagram size={20} /> <span>@ergoexpress_ve</span></div>
+                <div className="flex items-center gap-4 text-secondary hover:text-brand-primary transition-colors cursor-pointer"><Camera size={20} /> <span>@ergoexpress_ve</span></div>
                 <div className="flex items-center gap-4 text-secondary hover:text-brand-primary transition-colors cursor-pointer"><Globe size={20} /> <span>www.ergoexpress.com.ve</span></div>
              </div>
              <button className="btn btn-primary w-100 mt-8 flex items-center justify-center gap-2"><MessageSquare size={18} /> Contactar Soporte Directo</button>

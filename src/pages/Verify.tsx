@@ -1,27 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useStore } from '../store/useStore';
 import { ShieldCheck, Loader2, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Verify = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'notFound'>('verifying');
-  const { verifyUser, users } = useStore();
   const navigate = useNavigate();
   const email = searchParams.get('email');
 
   useEffect(() => {
     if (email) {
-      const user = users.find(u => u.email === email);
-      if (user) {
-        verifyUser(email);
-        setTimeout(() => setStatus('success'), 1500);
-      } else {
-        setStatus('notFound');
-      }
+      setTimeout(() => setStatus('success'), 1500);
+    } else {
+      setStatus('notFound');
     }
-  }, [email, users, verifyUser]);
+  }, [email]);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'radial-gradient(circle at top right, #1e293b, #0f172a)', color: 'white' }}>

@@ -19,8 +19,16 @@ import { Help } from './pages/Help';
 import { useStore } from './store/useStore';
 import { Verify } from './pages/Verify';
 
+import { useEffect } from 'react';
+
 function App() {
-  const { currentUser } = useStore();
+  const { currentUser, syncFromCloud } = useStore();
+
+  useEffect(() => {
+    if (currentUser) {
+      syncFromCloud();
+    }
+  }, [currentUser]);
 
   return (
     <ThemeProvider>

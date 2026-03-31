@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 
 // TODO: Reemplaza esto con tu configuración real de Supabase
 // Supabase es una excelente alternativa gratuita recomendada previamente
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabaseUrl = 'https://gxweleqduvjmbolvfppg.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4d2VsZXFkdXZqbWJvbHZmcHBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MzA5NjQsImV4cCI6MjA5MDQwNjk2NH0.sixAzHTZMzTxJQljtyHLa_hDFw5lXfKsCtbrapFB4yM';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 

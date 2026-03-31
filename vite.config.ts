@@ -18,7 +18,7 @@ export default defineConfig({
         name: 'SST ERGOEXPRESS - Sistema Integral',
         short_name: 'SIG-SST',
         description: 'Gestión Integral de Seguridad y Salud en el Trabajo (Enfoque Betancourt)',
-        theme_color: '#6366f1',
+        theme_color: '#006064',
         icons: [
           {
             src: 'pwa-192x192.png',
