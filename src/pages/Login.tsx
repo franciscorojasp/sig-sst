@@ -83,20 +83,47 @@ export const Login = () => {
   const cardStyle: React.CSSProperties = {
     width: '100%',
     maxWidth: '450px',
-    backgroundColor: 'rgba(10, 35, 38, 0.8)',
-    backdropFilter: 'blur(12px)',
+    backgroundColor: '#0a2326',
     borderRadius: '24px',
-    padding: '2.5rem',
-    border: '1px solid rgba(77, 182, 172, 0.2)',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    padding: '3rem 2.5rem',
+    border: '1px solid #1a3f44',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
     display: 'flex',
     flexDirection: 'column',
     gap: '2rem'
   };
 
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.8rem',
+    fontWeight: 800,
+    color: '#e0f2f1', // High contrast pale teal
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    marginBottom: '0.5rem'
+  };
+
+  const inputWrapperStyle: React.CSSProperties = {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center'
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '1rem 1rem 1rem 3.5rem',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    border: '1.5px solid #1a3f44',
+    borderRadius: '12px',
+    color: '#ffffff',
+    fontSize: '1rem',
+    outline: 'none',
+    transition: 'all 0.2s'
+  };
+
   if (isRequestSent) {
     return (
-      <div style={containerStyle}>
+      <div style={containerStyle} data-theme="dark">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
           style={cardStyle}
@@ -105,14 +132,14 @@ export const Login = () => {
             <div style={{ padding: '1.5rem', backgroundColor: 'rgba(77, 182, 172, 0.1)', borderRadius: '50%', color: '#4db6ac' }}>
               <CheckCircle size={64} />
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white', margin: 0 }}>Solicitud Enviada</h2>
-            <p style={{ color: '#90aeb2', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#e0f2f1', margin: 0 }}>Solicitud Enviada</h2>
+            <p style={{ color: '#90aeb2', fontSize: '1rem', lineHeight: 1.6 }}>
               Hemos enviado un email de verificación a <br/>
-              <strong style={{ color: '#4db6ac' }}>{email}</strong>.<br/><br/>
+              <strong style={{ color: '#4db6ac', fontWeight: 800 }}>{email}</strong>.<br/><br/>
               Habilita tu acceso haciendo clic en el enlace recibido.
             </p>
             <button 
-              style={{ width: '100%', padding: '1rem', backgroundColor: '#006064', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ width: '100%', padding: '1rem', backgroundColor: '#006064', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '1rem' }}
               onClick={() => setIsRequestSent(false)}
             >
               Volver al Inicio
@@ -124,64 +151,80 @@ export const Login = () => {
   }
 
   return (
-    <div style={containerStyle}>
+    <div style={containerStyle} data-theme="dark">
       <motion.div 
         initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         style={cardStyle}
       >
         <div style={{ textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', padding: '0', backgroundColor: 'transparent', borderRadius: '50%', marginBottom: '1rem', overflow: 'hidden' }}>
-            <img src={logo} alt="ERGOEXPRESS Logo" style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover' }} />
+          <div style={{ display: 'inline-flex', padding: '0', backgroundColor: 'transparent', borderRadius: '50%', marginBottom: '1.5rem', overflow: 'hidden', border: '2px solid rgba(77, 182, 172, 0.3)' }}>
+            <img src={logo} alt="ERGOEXPRESS Logo" style={{ width: '130px', height: '130px', objectFit: 'cover' }} />
           </div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', margin: 0, letterSpacing: '-0.025em' }}>
+          <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '-0.025em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             SIG<span style={{ color: '#4db6ac' }}>SST</span>
           </h1>
-          <p style={{ color: '#90aeb2', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: 600 }}>Gestión Integral de Salud en el Trabajo</p>
+          <p style={{ color: '#90aeb2', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: 600 }}>Gestión Integral de Salud en el Trabajo</p>
         </div>
 
-        <form onSubmit={isRegistering ? handleRegister : handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={isRegistering ? handleRegister : handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {isRegistering && (
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-teal-200 uppercase">Nombre Completo</label>
-              <div className="relative flex items-center">
-                <UserIcon className="absolute left-4 text-teal-500/50" size={20} />
-                <input required type="text" className="w-full pl-12 pr-4 py-3 bg-teal-950/30 border border-teal-500/20 rounded-xl text-white outline-none focus:border-teal-400 transition-all" placeholder="Nombre y Apellido" value={nombre} onChange={e => setNombre(e.target.value)} />
+            <div>
+              <label style={labelStyle}>Nombre Completo</label>
+              <div style={inputWrapperStyle}>
+                <UserIcon style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+                <input required type="text" style={inputStyle} placeholder="Nombre y Apellido" value={nombre} onChange={e => setNombre(e.target.value)} />
               </div>
             </div>
           )}
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-teal-200 uppercase">Correo Corporativo Gmail</label>
-            <div className="relative flex items-center">
-              <Mail className="absolute left-4 text-teal-500/50" size={20} />
-              <input required type="email" className="w-full pl-12 pr-4 py-3 bg-teal-950/30 border border-teal-500/20 rounded-xl text-white outline-none focus:border-teal-400 transition-all" placeholder="ejemplo@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
+          <div>
+            <label style={labelStyle}>Correo Corporativo Gmail</label>
+            <div style={inputWrapperStyle}>
+              <Mail style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+              <input required type="email" style={inputStyle} placeholder="ejemplo@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-teal-200 uppercase">Contraseña</label>
-            <div className="relative flex items-center">
-              <Lock className="absolute left-4 text-teal-500/50" size={20} />
-              <input required type="password" className="w-full pl-12 pr-4 py-3 bg-teal-950/30 border border-teal-500/20 rounded-xl text-white outline-none focus:border-teal-400 transition-all" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
+          <div>
+            <label style={labelStyle}>Contraseña</label>
+            <div style={inputWrapperStyle}>
+              <Lock style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+              <input required type="password" style={inputStyle} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
             </div>
           </div>
 
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-100 p-4 rounded-xl font-bold text-lg mt-4 flex items-center justify-center gap-2 transition-all ${loading ? 'bg-teal-900 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-900/40'}`}
-            style={{ color: 'white', border: 'none' }}
+            style={{ 
+              width: '100%', 
+              padding: '1.25rem', 
+              backgroundColor: loading ? '#0e2f33' : '#006064', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '16px', 
+              fontWeight: 900, 
+              fontSize: '1.1rem',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginTop: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.75rem',
+              boxShadow: loading ? 'none' : '0 10px 25px -5px rgba(0, 96, 100, 0.5)',
+              transition: 'all 0.3s'
+            }}
           >
             {loading ? "Procesando..." : (isRegistering ? "Solicitar Registro" : "Acceder al Sistema")}
-            {!loading && <ArrowRight size={20} />}
+            {!loading && <ArrowRight size={22} />}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '1.5rem' }}>
-          <p style={{ color: '#90aeb2', fontSize: '0.875rem' }}>
+        <div style={{ textAlign: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.5rem' }}>
+          <p style={{ color: '#90aeb2', fontSize: '0.9rem' }}>
             {isRegistering ? "¿Ya tienes una cuenta activa?" : "¿Aún no tienes acceso habilitado?"}
             <button 
-              style={{ marginLeft: '0.5rem', color: '#4db6ac', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+              style={{ marginLeft: '1rem', color: '#4db6ac', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.95rem' }}
               onClick={() => setIsRegistering(!isRegistering)}
             >
               {isRegistering ? "Inicia Sesión aquí" : "Regístrate ahora"}
