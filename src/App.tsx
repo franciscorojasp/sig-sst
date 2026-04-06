@@ -13,6 +13,7 @@ import { ProcesosPositivos } from './pages/ProcesosPositivos';
 import { Encuestas } from './pages/Encuestas';
 import { Diagramas } from './pages/Diagramas';
 import { Psst } from './pages/Psst';
+import { Biblioteca } from './pages/Biblioteca';
 import { Login } from './pages/Login';
 import { Developers } from './pages/Developers';
 import { Help } from './pages/Help';
@@ -57,6 +58,7 @@ function App() {
                 <Route path="psst" element={<Psst />} />
                 {/* Complementarios */}
                 <Route path="diagramas" element={<Diagramas />} />
+                <Route path="biblioteca" element={<Biblioteca />} />
                 <Route path="developers" element={<Developers />} />
                 <Route path="help" element={<Help />} />
              </Route>

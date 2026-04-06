@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 import { 
   Menu, X, Sun, Moon, LayoutDashboard, Database, 
   Users, Factory, Activity, AlertTriangle, ShieldCheck,
-  FileText, BarChart3, HelpCircle, Code, LogOut, ChevronRight
+  FileText, BarChart3, HelpCircle, Code, LogOut, ChevronRight, Library
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
@@ -35,8 +35,9 @@ const navItems = [
   { path: '/diagramas', label: 'Diagramas de Flujo',  icon: <BarChart3 size={18} />,  section: null },
 
   // SOPORTE
-  { path: '/help',       label: 'Ayuda y Guía',   icon: <HelpCircle size={18} />, section: 'SOPORTE' },
-  { path: '/developers', label: 'ERGOEXPRESS',    icon: <Code size={18} />,       section: null },
+  { path: '/biblioteca', label: 'Biblioteca Técnica', icon: <Library size={18} />,     section: 'SOPORTE' },
+  { path: '/help',       label: 'Ayuda y Guía',       icon: <HelpCircle size={18} />, section: null },
+  { path: '/developers', label: 'ERGOEXPRESS',        icon: <Code size={18} />,       section: null },
 ];
 
 export const Layout = () => {
