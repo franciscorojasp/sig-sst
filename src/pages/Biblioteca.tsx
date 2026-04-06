@@ -52,7 +52,7 @@ const DOCUMENTOS: Documento[] = [
     titulo: 'NT SSST: Servicios de Seguridad y Salud en el Trabajo',
     categoria: 'tecnica',
     descripcion: 'Requisitos para la organización y funcionamiento de los SSST.',
-    archivo: '/docs/NT SSST.pdf',
+    archivo: '/docs/NT_SSST.pdf',
     tags: ['Servicios', 'Salud', 'Gestión']
   },
   {
