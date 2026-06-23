@@ -19,6 +19,7 @@ import { Developers } from './pages/Developers';
 import { Help } from './pages/Help';
 import { useStore } from './store/useStore';
 import { Verify } from './pages/Verify';
+import { ResetPassword } from './pages/ResetPassword';
 
 import { useEffect } from 'react';
 
@@ -36,6 +37,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/verify-demo" element={<Verify />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           {!currentUser ? (
              <Route path="*" element={<Login />} />
           ) : (

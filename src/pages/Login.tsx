@@ -7,10 +7,12 @@ import { supabase } from '../lib/supabase';
 
 export const Login = () => {
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
   const [isRequestSent, setIsRequestSent] = useState(false);
+  const [isRecoveryEmailSent, setIsRecoveryEmailSent] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const { setCurrentUser } = useStore();
@@ -62,6 +64,26 @@ export const Login = () => {
       alert("Error de registro: " + error.message);
     } else {
       setIsRequestSent(true);
+    }
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.endsWith('@gmail.com')) {
+      alert("Por favor use una dirección válida de Gmail.");
+      return;
+    }
+    setLoading(true);
+    
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      alert("Error al enviar correo de recuperación: " + error.message);
+    } else {
+      setIsRecoveryEmailSent(true);
     }
     setLoading(false);
   };
@@ -150,6 +172,38 @@ export const Login = () => {
     );
   }
 
+  if (isRecoveryEmailSent) {
+    return (
+      <div style={containerStyle} data-theme="dark">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+          style={cardStyle}
+        >
+          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{ padding: '1.5rem', backgroundColor: 'rgba(77, 182, 172, 0.1)', borderRadius: '50%', color: '#4db6ac' }}>
+              <CheckCircle size={64} />
+            </div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#e0f2f1', margin: 0 }}>Enlace de Recuperación Enviado</h2>
+            <p style={{ color: '#90aeb2', fontSize: '1rem', lineHeight: 1.6 }}>
+              Hemos enviado un enlace para restablecer tu contraseña a <br/>
+              <strong style={{ color: '#4db6ac', fontWeight: 800 }}>{email}</strong>.<br/><br/>
+              Utiliza el enlace recibido para establecer tu nueva contraseña.
+            </p>
+            <button 
+              style={{ width: '100%', padding: '1rem', backgroundColor: '#006064', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '1rem' }}
+              onClick={() => {
+                setIsRecoveryEmailSent(false);
+                setIsRecovering(false);
+              }}
+            >
+              Volver al Inicio
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div style={containerStyle} data-theme="dark">
       <motion.div 
@@ -163,72 +217,137 @@ export const Login = () => {
           <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '-0.025em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             SIG<span style={{ color: '#4db6ac' }}>SST</span>
           </h1>
-          <p style={{ color: '#90aeb2', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: 600 }}>Gestión Integral de Salud en el Trabajo</p>
+          <p style={{ color: '#90aeb2', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: 600 }}>
+            {isRecovering ? "Recuperación de Contraseña" : "Gestión Integral de Salud en el Trabajo"}
+          </p>
         </div>
 
-        <form onSubmit={isRegistering ? handleRegister : handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {isRegistering && (
+        {isRecovering ? (
+          <form onSubmit={handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <p style={{ color: '#90aeb2', fontSize: '0.9rem', margin: '0 0 0.5rem 0', lineHeight: 1.5 }}>
+              Ingresa el correo electrónico asociado a tu cuenta para enviarte un enlace de recuperación.
+            </p>
             <div>
-              <label style={labelStyle}>Nombre Completo</label>
+              <label style={labelStyle}>Correo Corporativo Gmail</label>
               <div style={inputWrapperStyle}>
-                <UserIcon style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
-                <input required type="text" style={inputStyle} placeholder="Nombre y Apellido" value={nombre} onChange={e => setNombre(e.target.value)} />
+                <Mail style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+                <input required type="email" style={inputStyle} placeholder="ejemplo@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
               </div>
             </div>
-          )}
 
-          <div>
-            <label style={labelStyle}>Correo Corporativo Gmail</label>
-            <div style={inputWrapperStyle}>
-              <Mail style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
-              <input required type="email" style={inputStyle} placeholder="ejemplo@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
+            <button 
+              type="submit" 
+              disabled={loading}
+              style={{ 
+                width: '100%', 
+                padding: '1.25rem', 
+                backgroundColor: loading ? '#0e2f33' : '#006064', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '16px', 
+                fontWeight: 900, 
+                fontSize: '1.1rem',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                marginTop: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+                boxShadow: loading ? 'none' : '0 10px 25px -5px rgba(0, 96, 100, 0.5)',
+                transition: 'all 0.3s'
+              }}
+            >
+              {loading ? "Enviando..." : "Enviar enlace de recuperación"}
+              {!loading && <ArrowRight size={22} />}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={isRegistering ? handleRegister : handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {isRegistering && (
+              <div>
+                <label style={labelStyle}>Nombre Completo</label>
+                <div style={inputWrapperStyle}>
+                  <UserIcon style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+                  <input required type="text" style={inputStyle} placeholder="Nombre y Apellido" value={nombre} onChange={e => setNombre(e.target.value)} />
+                </div>
+              </div>
+            )}
+
+            <div>
+              <label style={labelStyle}>Correo Corporativo Gmail</label>
+              <div style={inputWrapperStyle}>
+                <Mail style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+                <input required type="email" style={inputStyle} placeholder="ejemplo@gmail.com" value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label style={labelStyle}>Contraseña</label>
-            <div style={inputWrapperStyle}>
-              <Lock style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
-              <input required type="password" style={inputStyle} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
+            <div>
+              <label style={labelStyle}>Contraseña</label>
+              <div style={inputWrapperStyle}>
+                <Lock style={{ position: 'absolute', left: '1.25rem', color: '#4db6ac' }} size={20} />
+                <input required type="password" style={inputStyle} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+              {!isRegistering && (
+                <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                  <button
+                    type="button"
+                    style={{ color: '#4db6ac', fontSize: '0.85rem', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={() => setIsRecovering(true)}
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            style={{ 
-              width: '100%', 
-              padding: '1.25rem', 
-              backgroundColor: loading ? '#0e2f33' : '#006064', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '16px', 
-              fontWeight: 900, 
-              fontSize: '1.1rem',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.75rem',
-              boxShadow: loading ? 'none' : '0 10px 25px -5px rgba(0, 96, 100, 0.5)',
-              transition: 'all 0.3s'
-            }}
-          >
-            {loading ? "Procesando..." : (isRegistering ? "Solicitar Registro" : "Acceder al Sistema")}
-            {!loading && <ArrowRight size={22} />}
-          </button>
-        </form>
+            <button 
+              type="submit" 
+              disabled={loading}
+              style={{ 
+                width: '100%', 
+                padding: '1.25rem', 
+                backgroundColor: loading ? '#0e2f33' : '#006064', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '16px', 
+                fontWeight: 900, 
+                fontSize: '1.1rem',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                marginTop: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+                boxShadow: loading ? 'none' : '0 10px 25px -5px rgba(0, 96, 100, 0.5)',
+                transition: 'all 0.3s'
+              }}
+            >
+              {loading ? "Procesando..." : (isRegistering ? "Solicitar Registro" : "Acceder al Sistema")}
+              {!loading && <ArrowRight size={22} />}
+            </button>
+          </form>
+        )}
 
         <div style={{ textAlign: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.5rem' }}>
           <p style={{ color: '#90aeb2', fontSize: '0.9rem' }}>
-            {isRegistering ? "¿Ya tienes una cuenta activa?" : "¿Aún no tienes acceso habilitado?"}
-            <button 
-              style={{ marginLeft: '1rem', color: '#4db6ac', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.95rem' }}
-              onClick={() => setIsRegistering(!isRegistering)}
-            >
-              {isRegistering ? "Inicia Sesión aquí" : "Regístrate ahora"}
-            </button>
+            {isRecovering ? (
+              <button 
+                style={{ color: '#4db6ac', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.95rem' }}
+                onClick={() => setIsRecovering(false)}
+              >
+                Volver a Iniciar Sesión
+              </button>
+            ) : (
+              <>
+                {isRegistering ? "¿Ya tienes una cuenta activa?" : "¿Aún no tienes acceso habilitado?"}
+                <button 
+                  style={{ marginLeft: '1rem', color: '#4db6ac', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.95rem' }}
+                  onClick={() => setIsRegistering(!isRegistering)}
+                >
+                  {isRegistering ? "Inicia Sesión aquí" : "Regístrate ahora"}
+                </button>
+              </>
+            )}
           </p>
         </div>
       </motion.div>
