@@ -6,7 +6,7 @@ import type {
   ProcesoTrabajo, ProcesoPeligroso, ProcesoPositivo, 
   EncuestaGH, User, AuditLog 
 } from '../types';
-import { supabase } from '../lib/supabase';
+import { googleSheets } from '../lib/googleSheets';
 
 interface AppState {
   currentUser: User | null;
@@ -70,19 +70,22 @@ export const useStore = create<AppState>()(
       setCurrentUser: (user) => set({ currentUser: user }),
 
       syncFromCloud: async () => {
-        const { data: emp } = await supabase.from('empresas').select('*');
-        const { data: trab } = await supabase.from('trabajadores').select('*');
-        const { data: pst } = await supabase.from('puestos_trabajo').select('*');
-        const { data: pt } = await supabase.from('procesos_trabajo').select('*');
-        const { data: pp } = await supabase.from('procesos_peligrosos').select('*');
-        
-        set({
-          empresas: emp || [],
-          trabajadores: trab || [],
-          puestos: pst || [],
-          procesosTrabajo: pt || [],
-          procesosPeligrosos: pp || [],
-        });
+        const { data, error } = await googleSheets.readAll();
+        if (error) {
+          console.error("Error al sincronizar con Google Sheets:", error);
+          return;
+        }
+        if (data) {
+          set({
+            empresas: data.empresas || [],
+            trabajadores: data.trabajadores || [],
+            puestos: data.puestos_trabajo || [],
+            procesosTrabajo: data.procesos_trabajo || [],
+            procesosPeligrosos: data.procesos_peligrosos || [],
+            procesosPositivos: data.procesos_positivos || [],
+            encuestas: data.encuestas_gh || [],
+          });
+        }
       },
 
       addAuditLog: (action, details) => {
@@ -96,43 +99,43 @@ export const useStore = create<AppState>()(
       // EMPRESAS
       addEmpresa: async (e) => {
         set((state) => ({ empresas: [...state.empresas, e] }));
-        await supabase.from('empresas').upsert(e);
+        await googleSheets.from('empresas').upsert(e);
       },
       updateEmpresa: async (id, u) => {
         set((state) => ({ empresas: state.empresas.map((e) => (e.id === id ? { ...e, ...u } : e)) }));
-        await supabase.from('empresas').update(u).eq('id', id);
+        await googleSheets.from('empresas').update(u).eq('id', id);
       },
       deleteEmpresa: async (id) => {
         set((state) => ({ empresas: state.empresas.filter((e) => e.id !== id) }));
-        await supabase.from('empresas').delete().eq('id', id);
+        await googleSheets.from('empresas').delete().eq('id', id);
       },
 
       // TRABAJADORES
       addTrabajador: async (t) => {
         set((state) => ({ trabajadores: [...state.trabajadores, t] }));
-        await supabase.from('trabajadores').upsert(t);
+        await googleSheets.from('trabajadores').upsert(t);
       },
       updateTrabajador: async (id, u) => {
         set((state) => ({ trabajadores: state.trabajadores.map((t) => (t.id === id ? { ...t, ...u } : t)) }));
-        await supabase.from('trabajadores').update(u).eq('id', id);
+        await googleSheets.from('trabajadores').update(u).eq('id', id);
       },
       deleteTrabajador: async (id) => {
         set((state) => ({ trabajadores: state.trabajadores.filter((t) => t.id !== id) }));
-        await supabase.from('trabajadores').delete().eq('id', id);
+        await googleSheets.from('trabajadores').delete().eq('id', id);
       },
 
       // PUESTOS
       addPuesto: async (p) => {
         set((state) => ({ puestos: [...state.puestos, p] }));
-        await supabase.from('puestos_trabajo').upsert(p);
+        await googleSheets.from('puestos_trabajo').upsert(p);
       },
       updatePuesto: async (id, u) => {
         set((state) => ({ puestos: state.puestos.map((p) => (p.id === id ? { ...p, ...u } : p)) }));
-        await supabase.from('puestos_trabajo').update(u).eq('id', id);
+        await googleSheets.from('puestos_trabajo').update(u).eq('id', id);
       },
       deletePuesto: async (id) => {
         set((state) => ({ puestos: state.puestos.filter((p) => p.id !== id) }));
-        await supabase.from('puestos_trabajo').delete().eq('id', id);
+        await googleSheets.from('puestos_trabajo').delete().eq('id', id);
       },
 
       // PROCESOS TRABAJO
@@ -140,43 +143,43 @@ export const useStore = create<AppState>()(
         const newCorrelativo = get().counters.pt + 1;
         const process = { ...p, correlativo: newCorrelativo };
         set((s) => ({ procesosTrabajo: [...s.procesosTrabajo, process], counters: { ...s.counters, pt: newCorrelativo } }));
-        await supabase.from('procesos_trabajo').upsert(process);
+        await googleSheets.from('procesos_trabajo').upsert(process);
       },
       updateProcesoTrabajo: async (id, u) => {
         set((s) => ({ procesosTrabajo: s.procesosTrabajo.map(p => p.id === id ? {...p, ...u} : p) }));
-        await supabase.from('procesos_trabajo').update(u).eq('id', id);
+        await googleSheets.from('procesos_trabajo').update(u).eq('id', id);
       },
       deleteProcesoTrabajo: async (id) => {
         set((s) => ({ procesosTrabajo: s.procesosTrabajo.filter(p => p.id !== id) }));
-        await supabase.from('procesos_trabajo').delete().eq('id', id);
+        await googleSheets.from('procesos_trabajo').delete().eq('id', id);
       },
 
       // PROCESOS PELIGROSOS
       addProcesoPeligroso: async (p) => {
         set((s) => ({ procesosPeligrosos: [...s.procesosPeligrosos, p] }));
-        await supabase.from('procesos_peligrosos').upsert(p);
+        await googleSheets.from('procesos_peligrosos').upsert(p);
       },
       updateProcesoPeligroso: async (id, u) => {
         set((s) => ({ procesosPeligrosos: s.procesosPeligrosos.map(p => p.id === id ? {...p, ...u} : p) }));
-        await supabase.from('procesos_peligrosos').update(u).eq('id', id);
+        await googleSheets.from('procesos_peligrosos').update(u).eq('id', id);
       },
       deleteProcesoPeligroso: async (id) => {
         set((s) => ({ procesosPeligrosos: s.procesosPeligrosos.filter(p => p.id !== id) }));
-        await supabase.from('procesos_peligrosos').delete().eq('id', id);
+        await googleSheets.from('procesos_peligrosos').delete().eq('id', id);
       },
 
       // PROCESOS POSITIVOS
       addProcesoPositivo: async (p) => {
         set((s) => ({ procesosPositivos: [...s.procesosPositivos, p] }));
-        await supabase.from('procesos_positivos').upsert(p);
+        await googleSheets.from('procesos_positivos').upsert(p);
       },
       updateProcesoPositivo: async (id, u) => {
         set((s) => ({ procesosPositivos: s.procesosPositivos.map(p => p.id === id ? {...p, ...u} : p) }));
-        await supabase.from('procesos_positivos').update(u).eq('id', id);
+        await googleSheets.from('procesos_positivos').update(u).eq('id', id);
       },
       deleteProcesoPositivo: async (id) => {
         set((s) => ({ procesosPositivos: s.procesosPositivos.filter(p => p.id !== id) }));
-        await supabase.from('procesos_positivos').delete().eq('id', id);
+        await googleSheets.from('procesos_positivos').delete().eq('id', id);
       },
 
       // ENCUESTAS
@@ -184,7 +187,7 @@ export const useStore = create<AppState>()(
         const newCorrelativo = get().counters.egh + 1;
         const encuesta = { ...e, correlativo: newCorrelativo };
         set((s) => ({ encuestas: [...s.encuestas, encuesta], counters: { ...s.counters, egh: newCorrelativo } }));
-        await supabase.from('encuestas_gh').upsert({
+        await googleSheets.from('encuestas_gh').upsert({
           id: encuesta.id,
           trabajador_id: encuesta.trabajadorId,
           puesto_id: encuesta.puestoId,
@@ -198,12 +201,12 @@ export const useStore = create<AppState>()(
         // For surveys, we update the whole raw data
         const updated = get().encuestas.find(e => e.id === id);
         if (updated) {
-          await supabase.from('encuestas_gh').update({ datos_raw: updated }).eq('id', id);
+          await googleSheets.from('encuestas_gh').update({ datos_raw: updated }).eq('id', id);
         }
       },
       deleteEncuesta: async (id) => {
         set((s) => ({ encuestas: s.encuestas.filter(e => e.id !== id) }));
-        await supabase.from('encuestas_gh').delete().eq('id', id);
+        await googleSheets.from('encuestas_gh').delete().eq('id', id);
       },
     }),
     { name: 'sig-sst-expert-v6' }

@@ -3,8 +3,8 @@ import { Lock, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion } from 'framer-motion';
 import logo from '../assets/logo.png';
-import { supabase } from '../lib/supabase';
-import { useNavigate } from 'react-router-dom';
+import { googleSheets } from '../lib/googleSheets';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -14,40 +14,22 @@ export const ResetPassword = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [hasSession, setHasSession] = useState<boolean | null>(null);
 
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get('email') || '';
+  const token = searchParams.get('token') || '';
+
   const { setCurrentUser } = useStore();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificar si hay una sesión activa de Supabase (el enlace de recuperación inicia sesión automáticamente)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setHasSession(true);
-      } else {
-        // En algunos casos, el fragmento de hash tarda un momento en ser analizado por el cliente Supabase
-        const hash = window.location.hash;
-        if (hash && (hash.includes('type=recovery') || hash.includes('access_token='))) {
-          const timer = setTimeout(() => {
-            supabase.auth.getSession().then(({ data: { session } }) => {
-              setHasSession(!!session);
-            });
-          }, 800);
-          return () => clearTimeout(timer);
-        } else {
-          setHasSession(false);
-        }
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
-        setHasSession(true);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (email && token) {
+      googleSheets.auth.validateResetToken(email, token).then(({ success }) => {
+        setHasSession(success);
+      });
+    } else {
+      setHasSession(false);
+    }
+  }, [email, token]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,9 +45,7 @@ export const ResetPassword = () => {
     setLoading(true);
     setErrorMsg('');
 
-    const { data, error } = await supabase.auth.updateUser({
-      password: password
-    });
+    const { data, error } = await googleSheets.auth.resetPasswordSubmit(email, token, password);
 
     if (error) {
       setErrorMsg("Error al actualizar la contraseña: " + error.message);
@@ -79,10 +59,10 @@ export const ResetPassword = () => {
         setCurrentUser({
           id: data.user.id,
           email: data.user.email!,
-          nombre: data.user.user_metadata.nombre || data.user.email!,
-          role: data.user.user_metadata.role || 'auditor',
+          nombre: data.user.nombre || data.user.email!,
+          role: data.user.role || 'auditor',
           isVerified: true,
-          createdAt: data.user.created_at
+          createdAt: data.user.createdAt
         });
       }
     }

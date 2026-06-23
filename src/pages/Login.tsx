@@ -3,7 +3,7 @@ import { Mail, Lock, User as UserIcon, ArrowRight, CheckCircle } from 'lucide-re
 import { useStore } from '../store/useStore';
 import { motion } from 'framer-motion';
 import logo from '../assets/logo.png';
-import { supabase } from '../lib/supabase';
+import { googleSheets } from '../lib/googleSheets';
 
 export const Login = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -21,21 +21,21 @@ export const Login = () => {
     e.preventDefault();
     setLoading(true);
     
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await googleSheets.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
       alert("Error de acceso: " + error.message);
-    } else if (data.user) {
+    } else if (data?.user) {
       setCurrentUser({
         id: data.user.id,
         email: data.user.email!,
-        nombre: data.user.user_metadata.nombre || data.user.email!,
-        role: data.user.user_metadata.role || 'auditor',
+        nombre: data.user.nombre || data.user.email!,
+        role: data.user.role || 'auditor',
         isVerified: true,
-        createdAt: data.user.created_at
+        createdAt: data.user.createdAt
       });
     }
     setLoading(false);
@@ -49,13 +49,12 @@ export const Login = () => {
     }
     setLoading(true);
     
-    const { error } = await supabase.auth.signUp({
+    const { error } = await googleSheets.auth.signUp({
       email,
       password,
       options: {
         data: {
           nombre,
-          role: 'auditor'
         }
       }
     });
@@ -76,7 +75,7 @@ export const Login = () => {
     }
     setLoading(true);
     
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await googleSheets.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
 

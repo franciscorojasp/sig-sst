@@ -2,20 +2,28 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ShieldCheck, Loader2, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { googleSheets } from '../lib/googleSheets';
 
 export const Verify = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'notFound'>('verifying');
   const navigate = useNavigate();
   const email = searchParams.get('email');
+  const token = searchParams.get('token');
 
   useEffect(() => {
-    if (email) {
-      setTimeout(() => setStatus('success'), 1500);
+    if (email && token) {
+      googleSheets.auth.verifyEmail(email, token).then(({ success }) => {
+        if (success) {
+          setStatus('success');
+        } else {
+          setStatus('notFound');
+        }
+      });
     } else {
       setStatus('notFound');
     }
-  }, [email]);
+  }, [email, token]);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'radial-gradient(circle at top right, #1e293b, #0f172a)', color: 'white' }}>
